@@ -11,6 +11,13 @@ public class VoteCommand implements CommandExecutor
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args)
     {
+        if (args[0].equalsIgnoreCase("reload") && (sender.isOp() || sender.hasPermission("DayVote.Reload")))
+        {
+            DayVote.getInstance().getConfig().reload();
+            sender.sendMessage(ChatColor.GREEN + "Reloaded configuration");
+            return true;
+        }
+
         if (!(sender instanceof Player))
         {
             sender.sendMessage(ChatColor.RED + "Only players can use this command!");

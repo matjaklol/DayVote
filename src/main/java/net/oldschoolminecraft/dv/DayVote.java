@@ -51,8 +51,11 @@ public class DayVote extends JavaPlugin
         int voteDurationSeconds = (int) config.getConfigOption("voteDurationSeconds");
         Bukkit.getScheduler().scheduleAsyncDelayedTask(this, () ->
         {
-            if (vote.didVotePass()) broadcast(String.valueOf(config.getConfigOption("messages.succeeded")));
-            else broadcast(String.valueOf(config.getConfigOption("messages.failed")));
+            if (vote.didVotePass())
+            {
+                broadcast(String.valueOf(config.getConfigOption("messages.succeeded")));
+                getServer().getWorld("world").setTime(0L);
+            } else broadcast(String.valueOf(config.getConfigOption("messages.failed")));
             resetVote();
         }, voteDurationSeconds * 20L);
         return vote;
