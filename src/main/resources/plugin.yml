@@ -1,0 +1,9 @@
+name: RainVote
+main: net.oldschoolminecraft.dv.DayVote
+authors:
+  - moderator_man
+  - BirchIsBad
+version: 1.0
+commands:
+  vote:
+    description: votes yes or no
