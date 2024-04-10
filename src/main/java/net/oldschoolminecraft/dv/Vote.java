@@ -37,7 +37,7 @@ public class Vote
     public boolean didVotePass()
     {
         if (no > yes) return false;
-        double percentage = calculatePercentage(yes, Bukkit.getOnlinePlayers().length);
+        double percentage = calculatePercentage(yes, voters.size());
         int required = (int) DayVote.getInstance().getConfig().getConfigOption("yesVotePercentageRequired");
         System.out.println("Vote finished with percentage: " + percentage + " (" + required + " required)");
         return percentage >= required;
