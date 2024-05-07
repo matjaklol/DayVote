@@ -49,16 +49,23 @@ public class DayVote extends JavaPlugin
         vote = new Vote();
         broadcast(String.valueOf(config.getConfigOption("messages.started")));
         int voteDurationSeconds = (int) config.getConfigOption("voteDurationSeconds");
-        Bukkit.getScheduler().scheduleAsyncDelayedTask(this, () ->
-        {
-            if (vote.didVotePass())
-            {
-                broadcast(String.valueOf(config.getConfigOption("messages.succeeded")));
-                getServer().getWorld("world").setTime(0L);
-            } else broadcast(String.valueOf(config.getConfigOption("messages.failed")));
-            resetVote();
-        }, voteDurationSeconds * 20L);
+        Bukkit.getScheduler().scheduleAsyncDelayedTask(this, this::processVote, voteDurationSeconds * 20L);
         return vote;
+    }
+
+    public void processVote()
+    {
+        if (vote == null)
+        {
+            startNewVote();
+            return;
+        }
+        if (vote.didVotePass())
+        {
+            broadcast(String.valueOf(config.getConfigOption("messages.succeeded")));
+            getServer().getWorld("world").setTime(0L);
+        } else broadcast(String.valueOf(config.getConfigOption("messages.failed")));
+        resetVote();
     }
 
     private void resetVote()

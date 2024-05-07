@@ -11,10 +11,17 @@ public class VoteCommand implements CommandExecutor
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args)
     {
-        if (args[0].equalsIgnoreCase("reload") && (sender.isOp() || sender.hasPermission("DayVote.Reload")))
+        if (args.length > 0 && args[0].equalsIgnoreCase("reload") && (sender.isOp() || sender.hasPermission("DayVote.Reload")))
         {
             DayVote.getInstance().getConfig().reload();
             sender.sendMessage(ChatColor.GREEN + "Reloaded configuration");
+            return true;
+        }
+
+        if (args.length > 0 && args[0].equalsIgnoreCase("reset") && (sender.isOp() || sender.hasPermission("DayVote.Reset")))
+        {
+            DayVote.getInstance().processVote();
+            sender.sendMessage(ChatColor.GREEN + "Reset vote status");
             return true;
         }
 
