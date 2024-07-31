@@ -1,11 +1,14 @@
 package net.oldschoolminecraft.dv;
 
+import com.earth2me.essentials.Essentials;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class DayVote extends JavaPlugin
 {
@@ -14,6 +17,8 @@ public class DayVote extends JavaPlugin
     private VoteConfig config;
     private Vote vote;
     private long lastVote;
+    private Essentials essentials;
+    private Timer timer = new Timer();
 
     public void onEnable()
     {
@@ -49,7 +54,17 @@ public class DayVote extends JavaPlugin
         vote = new Vote();
         broadcast(String.valueOf(config.getConfigOption("messages.started")));
         int voteDurationSeconds = (int) config.getConfigOption("voteDurationSeconds");
-        Bukkit.getScheduler().scheduleAsyncDelayedTask(this, this::processVote, voteDurationSeconds * 20L);
+//        Bukkit.getScheduler().scheduleAsyncDelayedTask(this, this::processVote, voteDurationSeconds * 20L);
+        TimerTask voteTimerTask = new TimerTask()
+        {
+            @Override
+            public void run()
+            {
+                processVote();
+                timer.cancel();
+            }
+        };
+        timer.schedule(voteTimerTask, (1000L * voteDurationSeconds));
         return vote;
     }
 
@@ -83,6 +98,11 @@ public class DayVote extends JavaPlugin
     public VoteConfig getConfig()
     {
         return config;
+    }
+
+    public Essentials getEssentials()
+    {
+        return essentials;
     }
 
     public static DayVote getInstance()
