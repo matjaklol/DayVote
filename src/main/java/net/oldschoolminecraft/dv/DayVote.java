@@ -61,7 +61,6 @@ public class DayVote extends JavaPlugin
             public void run()
             {
                 processVote();
-                timer.cancel();
             }
         };
         timer.schedule(voteTimerTask, (1000L * voteDurationSeconds));
