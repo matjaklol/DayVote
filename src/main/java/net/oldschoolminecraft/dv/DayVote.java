@@ -41,14 +41,14 @@ public class DayVote extends JavaPlugin
         return vote;
     }
 
-    public boolean canStartVote()
+    public synchronized boolean canStartVote()
     {
         long timeSinceLastVote = (UnixTime.now() - lastVote);
         int cooldown = (int) config.getConfigOption("cooldownSeconds");
         return timeSinceLastVote >= cooldown;
     }
 
-    public Vote startNewVote()
+    public synchronized Vote startNewVote()
     {
         if (!canStartVote()) return null;
         vote = new Vote();
@@ -67,7 +67,7 @@ public class DayVote extends JavaPlugin
         return vote;
     }
 
-    public void processVote()
+    public synchronized void processVote()
     {
         if (vote == null)
         {
@@ -82,7 +82,7 @@ public class DayVote extends JavaPlugin
         resetVote();
     }
 
-    private void resetVote()
+    private synchronized void resetVote()
     {
         vote = null;
         lastVote = UnixTime.now();
