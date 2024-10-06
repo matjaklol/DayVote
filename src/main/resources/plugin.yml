@@ -1,8 +1,7 @@
-name: RainVote
+name: DayVote
 main: net.oldschoolminecraft.dv.DayVote
 authors:
   - moderator_man
-  - BirchIsBad
 version: 1.0
 commands:
   vote:

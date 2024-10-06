@@ -9,6 +9,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.io.File;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class DayVote extends JavaPlugin
 {
@@ -18,7 +21,7 @@ public class DayVote extends JavaPlugin
     private Vote vote;
     private long lastVote;
     private Essentials essentials;
-    private Timer timer = new Timer();
+    private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
 
     public void onEnable()
     {
@@ -55,15 +58,7 @@ public class DayVote extends JavaPlugin
         broadcast(String.valueOf(config.getConfigOption("messages.started")));
         int voteDurationSeconds = (int) config.getConfigOption("voteDurationSeconds");
 //        Bukkit.getScheduler().scheduleAsyncDelayedTask(this, this::processVote, voteDurationSeconds * 20L);
-        TimerTask voteTimerTask = new TimerTask()
-        {
-            @Override
-            public void run()
-            {
-                processVote();
-            }
-        };
-        timer.schedule(voteTimerTask, (1000L * voteDurationSeconds));
+        scheduler.schedule(this::processVote, voteDurationSeconds, TimeUnit.SECONDS);
         return vote;
     }
 
