@@ -44,6 +44,11 @@ public class DayVote extends JavaPlugin
         return vote;
     }
 
+    public long getTimeSinceLastVote()
+    {
+        return (UnixTime.now() - lastVote);
+    }
+
     public synchronized boolean canStartVote()
     {
         long timeSinceLastVote = (UnixTime.now() - lastVote);
