@@ -27,7 +27,7 @@ public class DayVote extends JavaPlugin
     {
         instance = this;
         config = new VoteConfig(new File(getDataFolder(), "config.yml"));
-        lastVote = UnixTime.now() - 250;
+        lastVote = UnixTime.now() - 250L;
         getCommand("vote").setExecutor(new VoteCommand());
 
         System.out.println("DayVote started.");
@@ -46,6 +46,17 @@ public class DayVote extends JavaPlugin
 
     public synchronized boolean canStartVote()
     {
+        if(vote != null){
+            int voteCooldown = (int) config.getConfigOption("cooldownSeconds", 150);
+            voteCooldown += (int) config.getConfigOption("voteDurationSeconds", 65);
+            
+            //Failsafe. If vote is stuck in purgatory, check to see when it was initiated and whether
+            //or not we should start a new vote. 
+            if(UnixTime.now() - vote.getVoteStartTime() > voteDuration){
+                return true;
+            }
+        }
+        
         long timeSinceLastVote = (UnixTime.now() - lastVote);
         int cooldown = (int) config.getConfigOption("cooldownSeconds");
         return timeSinceLastVote >= cooldown;
