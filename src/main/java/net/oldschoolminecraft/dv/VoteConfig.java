@@ -20,13 +20,13 @@ public class VoteConfig extends Configuration {
     public void write() {
         generateConfigOption("allowRainVote", true);
         generateConfigOption("allowThunder", false);
-        generateConfigOption("cooldownSeconds", 180);
-        generateConfigOption("RainCooldownSeconds", 3600);
-        generateConfigOption("voteDurationSeconds", 60);
-        generateConfigOption("rainDurationTicks", 12000);
-        generateConfigOption("thunderDurationTicks", 12000);
-        generateConfigOption("yesVotePercentageRequired", 40);
-        generateConfigOption("yesRainVotePercentageRequired", 60);
+        generateConfigOption("cooldownSeconds", 180); //3 minutes
+        generateConfigOption("RainCooldownSeconds", 3580); //59 minutes 59 seconds
+        generateConfigOption("voteDurationSeconds", 60); //1 minute
+        generateConfigOption("rainDurationTicks", 12000); //10 minutes
+        generateConfigOption("thunderDurationTicks", 12000); //10 minutes
+        generateConfigOption("yesVotePercentageRequired", 40); //40 percent
+        generateConfigOption("yesRainVotePercentageRequired", 60); //60 percent
 
 
         generateConfigOption("messages.started", "&1[&bOSM&1] &7Vote for day has started! &a/vote yes &7or &c/vote no&7.");
