@@ -38,7 +38,7 @@ public class DayVote extends JavaPlugin {
         System.out.println("Last Rain Vote Time: " + lastRainVote);
         System.out.println("Current Unix Time: " + UnixTime.now());
         System.out.println("Vote Day Cooldown Setting: " + config.getConfigOption("cooldownSeconds"));
-        System.out.println("Vote Rain Cooldown Setting: " + config.getConfigOption("RainCooldownSeconds"));
+        System.out.println("Vote Rain Cooldown Setting: " + config.getConfigOption("rainCooldownSeconds"));
         System.out.println("Can start Day vote? " + (canStartVote() ? "Yes" : "No"));
         System.out.println("Can start Rain vote? " + (canStartRainVote() ? "Yes" : "No"));
     }
@@ -79,7 +79,7 @@ public class DayVote extends JavaPlugin {
 
     public synchronized boolean canStartRainVote() {
         long timeSinceLastRainVote = (UnixTime.now() - lastRainVote);
-        int cooldown = (int) config.getConfigOption("RainCooldownSeconds");
+        int cooldown = (int) config.getConfigOption("rainCooldownSeconds");
         return timeSinceLastRainVote >= cooldown;
     }
 
@@ -98,7 +98,7 @@ public class DayVote extends JavaPlugin {
 
     public int getRainCooldownTimeLeft() {
         long timeSinceLastRainVote = (UnixTime.now() - lastRainVote);
-        int cooldown = (int) config.getConfigOption("RainCooldownSeconds");
+        int cooldown = (int) config.getConfigOption("rainCooldownSeconds");
         return (int) (cooldown-timeSinceLastRainVote);
     }
 
