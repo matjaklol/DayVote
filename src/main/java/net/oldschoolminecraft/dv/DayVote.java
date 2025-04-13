@@ -28,8 +28,8 @@ public class DayVote extends JavaPlugin {
     public void onEnable() {
         instance = this;
         config = new VoteConfig(new File(getDataFolder(), "config.yml"));
-        lastVote = UnixTime.now() - 250;
-        lastRainVote = UnixTime.now() - 250;
+        lastVote = UnixTime.now() - 3580;
+        lastRainVote = UnixTime.now() - 3580;
         voteType = DayVoteType.NONE;
         getCommand("vote").setExecutor(new VoteCommand());
 
