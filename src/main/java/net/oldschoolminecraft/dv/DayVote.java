@@ -36,8 +36,6 @@ public class DayVote extends JavaPlugin
         voteType = DayVoteType.NONE;
         getCommand("vote").setExecutor(new VoteCommand());
 
-        getServer().getPluginManager().registerEvent(Event.Type.WEATHER_CHANGE, new WeatherHandler(), Event.Priority.Normal, this);
-
         System.out.println("DayVote version: " + getDescription().getVersion() + " enabled!");
         System.out.println("Last Vote Time: " + lastVote);
         System.out.println("Last Rain Vote Time: " + lastRainVote);
