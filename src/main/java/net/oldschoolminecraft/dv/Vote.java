@@ -36,6 +36,14 @@ public class Vote {
         return percentage >= required;
     }
 
+    public boolean didRainVotePass() {
+        if (no > yes) return false;
+        double percentage = calculatePercentage(yes, voters.size());
+        int required = (int) DayVote.getInstance().getConfig().getConfigOption("yesRainVotePercentageRequired");
+        System.out.println("Vote finished with percentage: " + percentage + " (" + required + " required)");
+        return percentage >= required;
+    }
+
     public Integer getYesVotes() {
         return (int) calculatePercentage(yes, voters.size());
     }
@@ -48,3 +56,4 @@ public class Vote {
         return obtained * 100 / total;
     }
 }
+
