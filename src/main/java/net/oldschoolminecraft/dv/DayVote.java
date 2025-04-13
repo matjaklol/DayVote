@@ -10,7 +10,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-public class DayVote extends JavaPlugin {
+public class DayVote extends JavaPlugin
+{
 
 
     private static DayVote instance;
@@ -25,7 +26,8 @@ public class DayVote extends JavaPlugin {
     public DayVoteType voteType;
 
     @Override
-    public void onEnable() {
+    public void onEnable()
+    {
         instance = this;
         config = new VoteConfig(new File(getDataFolder(), "config.yml"));
         lastVote = UnixTime.now() - 3599;
@@ -33,7 +35,7 @@ public class DayVote extends JavaPlugin {
         voteType = DayVoteType.NONE;
         getCommand("vote").setExecutor(new VoteCommand());
 
-        System.out.println("DayVote version: "+ getDescription().getVersion() + " enabled!");
+        System.out.println("DayVote version: " + getDescription().getVersion() + " enabled!");
         System.out.println("Last Vote Time: " + lastVote);
         System.out.println("Last Rain Vote Time: " + lastRainVote);
         System.out.println("Current Unix Time: " + UnixTime.now());
@@ -44,77 +46,88 @@ public class DayVote extends JavaPlugin {
     }
 
     @Override
-    public void onDisable() {
+    public void onDisable()
+    {
         forceCancelVote();
-        System.out.println("DayVote version: "+ getDescription().getVersion() + " disabled!");
+        System.out.println("DayVote version: " + getDescription().getVersion() + " disabled!");
     }
 
-    public Vote getActiveVote() {
+    public Vote getActiveVote()
+    {
         return vote;
     }
 
-    public boolean canVoteRain() {
-        if (config.getConfigOption("allowRainVote").equals(true)) {
+    public boolean canVoteRain()
+    {
+        if (config.getConfigOption("allowRainVote").equals(true))
             return true;
-        }
-        else {
-            return false;
-        }
+        else return false;
     }
 
-    public void setAllowRainVote(boolean option) {
-        try {
+    public void setAllowRainVote(boolean option)
+    {
+        try
+        {
             config.setProperty("allowRainVote", option);
             config.save();
         } catch (Exception exception) {
             exception.printStackTrace();
         }
     }
-//  DAY
-    public synchronized boolean canStartVote() {
+
+    //  DAY
+    public synchronized boolean canStartVote()
+    {
         long timeSinceLastVote = (UnixTime.now() - lastVote);
         int cooldown = (int) config.getConfigOption("cooldownSeconds");
         return timeSinceLastVote >= cooldown;
     }
 
-    public synchronized boolean canStartRainVote() {
+    public synchronized boolean canStartRainVote()
+    {
         long timeSinceLastRainVote = (UnixTime.now() - lastRainVote);
         int cooldown = (int) config.getConfigOption("rainCooldownSeconds");
         return timeSinceLastRainVote >= cooldown;
     }
 
-    public int getCooldownTimeLeft() {
+    public int getCooldownTimeLeft()
+    {
         long timeSinceLastVote = (UnixTime.now() - lastVote);
         int cooldown = (int) config.getConfigOption("cooldownSeconds");
-        return (int) (cooldown-timeSinceLastVote);
+        return (int) (cooldown - timeSinceLastVote);
     }
 
-    public int getVoteTimeLeft() {
+    public int getVoteTimeLeft()
+    {
         long timeSinceLastVoteStart = (UnixTime.now() - lastStartVote);
         int voteDurationSeconds = (int) config.getConfigOption("voteDurationSeconds");
-        return (int) (voteDurationSeconds-timeSinceLastVoteStart);
+        return (int) (voteDurationSeconds - timeSinceLastVoteStart);
     }
 //  RAIN
 
-    public int getRainCooldownTimeLeft() {
+    public int getRainCooldownTimeLeft()
+    {
         long timeSinceLastRainVote = (UnixTime.now() - lastRainVote);
         int cooldown = (int) config.getConfigOption("rainCooldownSeconds");
-        return (int) (cooldown-timeSinceLastRainVote);
+        return (int) (cooldown - timeSinceLastRainVote);
     }
 
-    public int getRainVoteTimeLeft() {
+    public int getRainVoteTimeLeft()
+    {
         long timeSinceLastRainVoteStart = (UnixTime.now() - lastRainStartVote);
         int voteDurationSeconds = (int) config.getConfigOption("voteDurationSeconds");
-        return (int) (voteDurationSeconds-timeSinceLastRainVoteStart);
+        return (int) (voteDurationSeconds - timeSinceLastRainVoteStart);
     }
 
-    public String formatTime(final long seconds) {
+    public String formatTime(final long seconds)
+    {
         final long minute = TimeUnit.SECONDS.toMinutes(seconds);
         final long second = TimeUnit.SECONDS.toSeconds(seconds) - TimeUnit.SECONDS.toMinutes(seconds) * 60L;
         return minute + "m" + second + "s";
     }
 
-    public synchronized Vote startNewDayVote() {
+    public synchronized Vote startNewDayVote()
+    {
         if (!canStartVote()) return null;
         vote = new Vote();
         setVoteType(DayVoteType.DAY);
@@ -125,7 +138,8 @@ public class DayVote extends JavaPlugin {
         return vote;
     }
 
-    public synchronized Vote startNewRainVote() {
+    public synchronized Vote startNewRainVote()
+    {
         if (!canStartRainVote()) return null;
         vote = new Vote();
         setVoteType(DayVoteType.RAIN);
@@ -136,90 +150,97 @@ public class DayVote extends JavaPlugin {
         return vote;
     }
 
-    public synchronized void processDayVote() {
-        if (vote == null) {
+    public synchronized void processDayVote()
+    {
+        if (vote == null)
+        {
             startNewDayVote();
             return;
         }
 
-        if (vote.didVotePass()) {
+        if (vote.didVotePass())
+        {
             broadcast(String.valueOf(config.getConfigOption("messages.succeeded")));
             Bukkit.getServer().getWorld("world").setTime(0);
-        }
-        else {
-            broadcast(String.valueOf(config.getConfigOption("messages.failed")));
-        }
+        } else broadcast(String.valueOf(config.getConfigOption("messages.failed")));
         resetDayVote();
     }
 
-    public synchronized void processRainVote() {
-        if (vote == null) {
+    public synchronized void processRainVote()
+    {
+        if (vote == null)
+        {
             startNewRainVote();
             return;
         }
 
-        if (vote.didRainVotePass()) {
-            if (Bukkit.getServer().getWorld("world").hasStorm()) {
+        if (vote.didRainVotePass())
+        {
+            if (Bukkit.getServer().getWorld("world").hasStorm())
+            {
                 broadcast(String.valueOf(config.getConfigOption("messages.alreadyRaining")));
-            }
-            else {
+            } else {
                 int rainDuration = (int) config.getConfigOption("rainDurationTicks");
                 broadcast(String.valueOf(config.getConfigOption("messages.succeededRain")));
                 Bukkit.getServer().getWorld("world").setStorm(true);
                 Bukkit.getServer().getWorld("world").setWeatherDuration(rainDuration);
-                if (config.getConfigOption("allowThunder").equals(true)) {
+                if (config.getConfigOption("allowThunder").equals(true))
+                {
                     int thunderDuration = (int) config.getConfigOption("thunderDurationTicks");
                     Bukkit.getServer().getWorld("world").setThundering(true);
                     Bukkit.getServer().getWorld("world").setThunderDuration(thunderDuration);
-                }
-                else {
-                    Bukkit.getServer().getWorld("world").setThundering(false);
-                }
+                } else Bukkit.getServer().getWorld("world").setThundering(false);
             }
-        }
-        else {
-            broadcast(String.valueOf(config.getConfigOption("messages.failedRain")));
-        }
+        } else broadcast(String.valueOf(config.getConfigOption("messages.failedRain")));
         resetRainVote();
     }
 
-    private synchronized void resetDayVote() {
+    private synchronized void resetDayVote()
+    {
         vote = null;
         setVoteType(DayVoteType.NONE);
         lastVote = UnixTime.now();
     }
 
-    private synchronized void resetRainVote() {
+    private synchronized void resetRainVote()
+    {
         vote = null;
         setVoteType(DayVoteType.NONE);
         lastRainVote = UnixTime.now();
     }
 
-    private synchronized void forceCancelVote() {
-        if (vote != null) {
+    private synchronized void forceCancelVote()
+    {
+        if (vote != null)
+        {
             resetDayVote();
             resetRainVote();
         }
     }
 
-    private void broadcast(String msg) {
+    private void broadcast(String msg)
+    {
         for (Player all : getServer().getOnlinePlayers())
             all.sendMessage(ChatColor.translateAlternateColorCodes('&', msg));
     }
 
-    public VoteConfig getConfig() {
+    public VoteConfig getConfig()
+    {
         return config;
     }
 
-    public static DayVote getInstance() {
+    public static DayVote getInstance()
+    {
         return instance;
     }
 
-    public void setVoteType(DayVoteType voteType) {
+    public void setVoteType(DayVoteType voteType)
+    {
         this.voteType = voteType;
     }
 
-    public DayVoteType getVoteType() {
+    public DayVoteType getVoteType()
+    {
         return voteType;
     }
 }
