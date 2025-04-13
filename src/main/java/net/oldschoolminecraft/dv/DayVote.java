@@ -3,6 +3,7 @@ package net.oldschoolminecraft.dv;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -34,6 +35,8 @@ public class DayVote extends JavaPlugin
         lastRainVote = UnixTime.now() - 3599;
         voteType = DayVoteType.NONE;
         getCommand("vote").setExecutor(new VoteCommand());
+
+        getServer().getPluginManager().registerEvent(Event.Type.WEATHER_CHANGE, new WeatherHandler(), Event.Priority.Normal, this);
 
         System.out.println("DayVote version: " + getDescription().getVersion() + " enabled!");
         System.out.println("Last Vote Time: " + lastVote);
