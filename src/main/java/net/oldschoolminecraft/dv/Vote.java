@@ -1,6 +1,5 @@
 package net.oldschoolminecraft.dv;
 
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -9,14 +8,12 @@ public class Vote
 {
     private int yes, no;
     private ArrayList<String> voters;
-    private long startTime;
-    
+
     public Vote()
     {
         voters = new ArrayList<>();
         yes = 0;
         no = 0;
-        startTime = UnixTime.now();
     }
 
     public void incrementYes(Player player)
@@ -44,14 +41,29 @@ public class Vote
         System.out.println("Vote finished with percentage: " + percentage + " (" + required + " required)");
         return percentage >= required;
     }
-    
+
+    public boolean didRainVotePass()
+    {
+        if (no > yes) return false;
+        double percentage = calculatePercentage(yes, voters.size());
+        int required = (int) DayVote.getInstance().getConfig().getConfigOption("yesRainVotePercentageRequired");
+        System.out.println("Vote finished with percentage: " + percentage + " (" + required + " required)");
+        return percentage >= required;
+    }
+
+    public Integer getYesVotes()
+    {
+        return (int) calculatePercentage(yes, voters.size());
+    }
+
+    public Integer getNoVotes()
+    {
+        return (int) calculatePercentage(no, voters.size());
+    }
+
     private double calculatePercentage(double obtained, double total)
     {
         return obtained * 100 / total;
     }
-
-    public long getVoteStartTime(){
-        return this.startTime;
-    }
-    
 }
+
