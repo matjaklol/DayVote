@@ -21,7 +21,7 @@ public class VoteConfig extends Configuration {
         generateConfigOption("allowRainVote", true);
         generateConfigOption("allowThunder", false);
         generateConfigOption("cooldownSeconds", 180); //3 minutes
-        generateConfigOption("RainCooldownSeconds", 3599); //59 minutes 59 seconds
+        generateConfigOption("rainCooldownSeconds", 3599); //59 minutes 59 seconds
         generateConfigOption("voteDurationSeconds", 60); //1 minute
         generateConfigOption("rainDurationTicks", 12000); //10 minutes
         generateConfigOption("thunderDurationTicks", 12000); //10 minutes
