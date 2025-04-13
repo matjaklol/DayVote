@@ -56,7 +56,7 @@ public class VoteCommand implements CommandExecutor
             sender.sendMessage("§aDayVote §7version §b" + DayVote.getInstance().getDescription().getVersion());
             sender.sendMessage("§7Website: §egithub.com/OldSchoolMinecraft/DayVote");
             sender.sendMessage("§7Authors(s): §emoderator_man");
-            sender.sendMessage("§7Contributors(s): §ematjaklol§7, §eSavageUser§7");
+            sender.sendMessage("§7Contributors(s): §ekeyboardan§7, §eSavageUser§7");
             return true;
         }
 
@@ -187,13 +187,13 @@ public class VoteCommand implements CommandExecutor
         if (DayVote.getInstance().getVoteType() == DayVoteType.NONE)
             {
                 if(vote != null){
-                    
-                    countYesVote(vote, (Player) sender);
                     if(isVoteExpired(vote)){
-                        DayVote.getInstance().processDayVote();
+                        this.tryStartDayVote()
                         return true;
                     }
 
+                    countYesVote(vote, (Player) sender);
+                    return true;
                 } else {
                     vote = DayVote.getInstance().startNewDayVote();
                     if (vote == null) // cooldown prevented new vote start
@@ -207,11 +207,11 @@ public class VoteCommand implements CommandExecutor
             } else {
                 //Check if vote is expired and if so, reset it and try again.
                 if(isVoteExpired(vote)){
-                    DayVote.getInstance().processDayVote();
+                    this.tryStartDayVote();
                     return true;
                 }
 
-                sender.sendMessage("§4A vote is currently active!");
+                sender.sendMessage("§4Another vote is currently active!");
                 return true;
             }
     }
@@ -226,12 +226,11 @@ public class VoteCommand implements CommandExecutor
                 {
                     if (vote != null)
                     {
-                        countYesVote(vote, (Player) sender);
-
                         if(isVoteExpired()){
-                            DayVote.getInstance().processRainVote();
+                            this.tryStartRainVote(null, sender);
+                            return true;
                         }
-
+                        countYesVote(vote, (Player) sender);
                         return true;
                     } else {
                         vote = DayVote.getInstance().startNewRainVote();
@@ -249,10 +248,10 @@ public class VoteCommand implements CommandExecutor
                 }
             } else {
                 if(isVoteExpired(vote)){
-                    DayVote.getInstance().processRainVote();
-                    return;
+                    this.tryStartRainVote(null, sender);
+                    return true;
                 }
-                sender.sendMessage("§4A vote is currently active!");
+                sender.sendMessage("§4Another vote is currently active!");
                 return true;
             }
     }
@@ -269,6 +268,7 @@ public class VoteCommand implements CommandExecutor
             //Total Delay = Vote Countdown + Vote Cooldown
             int totalDelay = ((int) config.getConfigOption("cooldownSeconds")) + ((int) config.getConfigOption("voteDurationSeconds"));
             if(UnixTime.now() - ((long) totalDelay) - vote.getTimeStamp() >= 0){
+                DayVote.getInstance().resetDayVote();
                 return true;
             }
         } else if(DayVote.getInstance().getVoteType() == DayVoteType.RAIN){
@@ -276,6 +276,7 @@ public class VoteCommand implements CommandExecutor
             //Total Delay = Vote Countdown + Vote Cooldown
             int totalDelay = ((int) config.getConfigOption("rainCooldownSeconds")) + ((int) config.getConfigOption("voteDurationSeconds"));
             if(UnixTime.now() - ((long) totalDelay) - vote.getTimeStamp() >= 0){
+                DayVote.getInstance().resetRainVote();
                 return true;
             }
         }

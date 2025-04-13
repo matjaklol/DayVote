@@ -120,6 +120,15 @@ public class DayVote extends JavaPlugin
         return (int) (voteDurationSeconds - timeSinceLastRainVoteStart);
     }
 
+    public long getLastStartVoteTime(){
+        return lastStartVote;
+    }
+
+    public long getLastRainStartTime(){
+        return lastRainStartVote;
+    }
+    
+
     public String formatTime(final long seconds)
     {
         final long minute = TimeUnit.SECONDS.toMinutes(seconds);
@@ -131,6 +140,8 @@ public class DayVote extends JavaPlugin
     {
         if (!canStartVote()) return null;
         vote = new Vote();
+        vote.setTimeStamp(UnixTime.now());
+
         setVoteType(DayVoteType.DAY);
         broadcast(String.valueOf(config.getConfigOption("messages.started")));
         int voteDurationSeconds = (int) config.getConfigOption("voteDurationSeconds");
@@ -143,6 +154,8 @@ public class DayVote extends JavaPlugin
     {
         if (!canStartRainVote()) return null;
         vote = new Vote();
+        vote.setTimeStamp(UnixTime.now());
+
         setVoteType(DayVoteType.RAIN);
         broadcast(String.valueOf(config.getConfigOption("messages.startedRain")));
         int voteDurationSeconds = (int) config.getConfigOption("voteDurationSeconds");
@@ -196,14 +209,14 @@ public class DayVote extends JavaPlugin
         resetRainVote();
     }
 
-    private synchronized void resetDayVote()
+    public synchronized void resetDayVote()
     {
         vote = null;
         setVoteType(DayVoteType.NONE);
         lastVote = UnixTime.now();
     }
 
-    private synchronized void resetRainVote()
+    public synchronized void resetRainVote()
     {
         vote = null;
         setVoteType(DayVoteType.NONE);
