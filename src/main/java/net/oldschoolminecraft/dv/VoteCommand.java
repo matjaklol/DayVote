@@ -100,95 +100,50 @@ public class VoteCommand implements CommandExecutor
 
         if (args.length == 0)
         {
-            if (vote == null)
-            { // no vote active
+            if(vote == null){
                 sender.sendMessage("§4No vote is active! Use §b/vote day §4or §b/vote rain §4to start a vote.");
                 return true;
-            } else {
-                int required = (int) DayVote.getInstance().getConfig().getConfigOption("yesVotePercentageRequired");
-                int requiredRain = (int) DayVote.getInstance().getConfig().getConfigOption("yesRainVotePercentageRequired");
-
-                if (DayVote.getInstance().getVoteType() == DayVoteType.DAY)
-                {
-                    sender.sendMessage("§1[§bOSM§1] §7Time Remaining: §b" + DayVote.getInstance().formatTime(DayVote.getInstance().getVoteTimeLeft()));
-                } else if (DayVote.getInstance().getVoteType() == DayVoteType.RAIN) {
-                    sender.sendMessage("§1[§bOSM§1] §7Time Remaining: §b" + DayVote.getInstance().formatTime(DayVote.getInstance().getRainVoteTimeLeft()));
-                }
-
-                sender.sendMessage("§1[§bOSM§1] §7Vote Type: §b" + DayVote.getInstance().getVoteType());
-
-                if (DayVote.getInstance().getVoteType() == DayVoteType.DAY)
-                {
-                    sender.sendMessage("§1[§bOSM§1] §7Required: §e" + required + "%");
-                } else if (DayVote.getInstance().getVoteType() == DayVoteType.RAIN) {
-                    sender.sendMessage("§1[§bOSM§1] §7Required: §e" + requiredRain + "%");
-                }
-
-                sender.sendMessage("§1[§bOSM§1] §7Current Results: §a" + vote.getYesVotes() + "%§8/§4" + vote.getNoVotes() + "%");
-
-                if (DayVote.getInstance().getVoteType() == DayVoteType.DAY)
-                {
-                    sender.sendMessage("§1[§bOSM§1] §7Vote for day or night using §a/vote yes §7or §c/vote no§7.");
-                } else if (DayVote.getInstance().getVoteType() == DayVoteType.RAIN) {
-                    sender.sendMessage("§1[§bOSM§1] §7Vote for rain using §a/vote yes §7or §c/vote no§7.");
-                }
-
-                return true;
             }
+
+            
+            int required = (int) DayVote.getInstance().getConfig().getConfigOption("yesVotePercentageRequired");
+            int requiredRain = (int) DayVote.getInstance().getConfig().getConfigOption("yesRainVotePercentageRequired");
+
+            if (DayVote.getInstance().getVoteType() == DayVoteType.DAY)
+            {
+                sender.sendMessage("§1[§bOSM§1] §7Time Remaining: §b" + DayVote.getInstance().formatTime(DayVote.getInstance().getVoteTimeLeft()));
+            } else if (DayVote.getInstance().getVoteType() == DayVoteType.RAIN) {
+                sender.sendMessage("§1[§bOSM§1] §7Time Remaining: §b" + DayVote.getInstance().formatTime(DayVote.getInstance().getRainVoteTimeLeft()));
+            }
+
+            sender.sendMessage("§1[§bOSM§1] §7Vote Type: §b" + DayVote.getInstance().getVoteType());
+
+            if (DayVote.getInstance().getVoteType() == DayVoteType.DAY)
+            {
+                sender.sendMessage("§1[§bOSM§1] §7Required: §e" + required + "%");
+            } else if (DayVote.getInstance().getVoteType() == DayVoteType.RAIN) {
+                sender.sendMessage("§1[§bOSM§1] §7Required: §e" + requiredRain + "%");
+            }
+
+            sender.sendMessage("§1[§bOSM§1] §7Current Results: §a" + vote.getYesVotes() + "%§8/§4" + vote.getNoVotes() + "%");
+
+            if (DayVote.getInstance().getVoteType() == DayVoteType.DAY)
+            {
+                sender.sendMessage("§1[§bOSM§1] §7Vote for day or night using §a/vote yes §7or §c/vote no§7.");
+            } else if (DayVote.getInstance().getVoteType() == DayVoteType.RAIN) {
+                sender.sendMessage("§1[§bOSM§1] §7Vote for rain using §a/vote yes §7or §c/vote no§7.");
+            }
+
+            return true;
         }
 
-        if (args[0].equalsIgnoreCase("day"))
-        {
-            if (DayVote.getInstance().getVoteType() == DayVoteType.NONE)
-            {
-                if (vote != null)
-                {
-                    countYesVote(vote, (Player) sender);
-                    return true;
-                } else {
-                    vote = DayVote.getInstance().startNewDayVote();
-                    if (vote == null) // cooldown prevented new vote start
-                    {
-                        sender.sendMessage("§4Cooldown time left: §b" + DayVote.getInstance().formatTime(DayVote.getInstance().getCooldownTimeLeft()));
-                        return true;
-                    }
-                    countYesVote(vote, (Player) sender);
-                    return true;
-                }
-            } else {
-                sender.sendMessage("§4A vote is currently active!");
-                return true;
-            }
+
+        if (args[0].equalsIgnoreCase("day")){
+            return tryStartDayVote(vote, sender);
         }
 
-        if (args[0].equalsIgnoreCase("rain") || args[0].equalsIgnoreCase("rainstorm"))
-        {
-            if (DayVote.getInstance().getVoteType() == DayVoteType.NONE)
-            {
-                if (DayVote.getInstance().canVoteRain())
-                {
-                    if (vote != null)
-                    {
-                        countYesVote(vote, (Player) sender);
-                        return true;
-                    } else {
-                        vote = DayVote.getInstance().startNewRainVote();
-                        if (vote == null)
-                        { // cooldown prevented new vote start
-                            sender.sendMessage("§4Cooldown time left: §b" + DayVote.getInstance().formatTime(DayVote.getInstance().getRainCooldownTimeLeft()));
-                            return true;
-                        }
-                        countYesVote(vote, (Player) sender);
-                        return true;
-                    }
-                } else {
-                    sender.sendMessage("§4Voting for rain is currently disabled!");
-                    return true;
-                }
-            } else {
-                sender.sendMessage("§4A vote is currently active!");
-                return true;
-            }
+        if (args[0].equalsIgnoreCase("rain") || args[0].equalsIgnoreCase("rainstorm") || args[0].equalsIgnoreCase("storm")){
+            return tryStartRainVote(vote, sender);
         }
 
         if (args[0].equalsIgnoreCase("yes") || args[0].equalsIgnoreCase("y"))
@@ -222,7 +177,112 @@ public class VoteCommand implements CommandExecutor
 
             return true;
         }
+
+
+    
     }
+
+    //Handles all the day vote logic. 
+    private boolean tryStartDayVote(Vote vote, Object sender){
+        if (DayVote.getInstance().getVoteType() == DayVoteType.NONE)
+            {
+                if(vote != null){
+                    
+                    countYesVote(vote, (Player) sender);
+                    if(isVoteExpired(vote)){
+                        DayVote.getInstance().processDayVote();
+                        return true;
+                    }
+
+                } else {
+                    vote = DayVote.getInstance().startNewDayVote();
+                    if (vote == null) // cooldown prevented new vote start
+                    {
+                        sender.sendMessage("§4Cooldown time left: §b" + DayVote.getInstance().formatTime(DayVote.getInstance().getCooldownTimeLeft()));
+                        return true;
+                    }
+                    countYesVote(vote, (Player) sender);
+                    return true;
+                }
+            } else {
+                //Check if vote is expired and if so, reset it and try again.
+                if(isVoteExpired(vote)){
+                    DayVote.getInstance().processDayVote();
+                    return true;
+                }
+
+                sender.sendMessage("§4A vote is currently active!");
+                return true;
+            }
+    }
+
+    
+
+    //Handles all the major rain vote logic. Whether or not a vote can/should be started, etc.
+    private boolean tryStartRainVote(Vote vote, Object sender){
+        if (DayVote.getInstance().getVoteType() == DayVoteType.NONE)
+            {
+                if (DayVote.getInstance().canVoteRain())
+                {
+                    if (vote != null)
+                    {
+                        countYesVote(vote, (Player) sender);
+
+                        if(isVoteExpired()){
+                            DayVote.getInstance().processRainVote();
+                        }
+
+                        return true;
+                    } else {
+                        vote = DayVote.getInstance().startNewRainVote();
+                        if (vote == null)
+                        { // cooldown prevented new vote start
+                            sender.sendMessage("§4Cooldown time left: §b" + DayVote.getInstance().formatTime(DayVote.getInstance().getRainCooldownTimeLeft()));
+                            return true;
+                        }
+                        countYesVote(vote, (Player) sender);
+                        return true;
+                    }
+                } else {
+                    sender.sendMessage("§4Voting for rain is currently disabled!");
+                    return true;
+                }
+            } else {
+                if(isVoteExpired(vote)){
+                    DayVote.getInstance().processRainVote();
+                    return;
+                }
+                sender.sendMessage("§4A vote is currently active!");
+                return true;
+            }
+    }
+    
+    //Determines if a vote (with a given timestamp) is expired.
+    private boolean isVoteExpired(Vote vote){
+        if(vote == null){
+            return true;
+        }
+        VoteConfig config = DayVote.getInstance().getConfig();
+        int totalDelay = 0;
+        if(DayVote.getInstance().getVoteType() == DayVoteType.DAY || DayVote.getInstance().getVoteType() == DayVoteType.NONE){
+            //Run day check.
+            //Total Delay = Vote Countdown + Vote Cooldown
+            int totalDelay = ((int) config.getConfigOption("cooldownSeconds")) + ((int) config.getConfigOption("voteDurationSeconds"));
+            if(UnixTime.now() - ((long) totalDelay) - vote.getTimeStamp() >= 0){
+                return true;
+            }
+        } else if(DayVote.getInstance().getVoteType() == DayVoteType.RAIN){
+            //Run weather check
+            //Total Delay = Vote Countdown + Vote Cooldown
+            int totalDelay = ((int) config.getConfigOption("rainCooldownSeconds")) + ((int) config.getConfigOption("voteDurationSeconds"));
+            if(UnixTime.now() - ((long) totalDelay) - vote.getTimeStamp() >= 0){
+                return true;
+            }
+        }
+
+       return false; 
+    }
+
 
     private void countYesVote(Vote vote, Player player)
     {

@@ -8,12 +8,20 @@ public class Vote
 {
     private int yes, no;
     private ArrayList<String> voters;
-
+    private long timeStamp;
     public Vote()
     {
         voters = new ArrayList<>();
         yes = 0;
         no = 0;
+    }
+
+    public void setTimeStamp(long initTime){
+        this.timeSTamp = initTime;
+    }
+
+    public long getTimeStamp(){
+        return this.timeStamp;
     }
 
     public void incrementYes(Player player)
