@@ -14,6 +14,10 @@ public class Vote
         voters = new ArrayList<>();
         yes = 0;
         no = 0;
+
+        //We never set the timestamp for the current vote anywhere, causing any checks based around
+        //the start time to be unusable
+        setTimeStamp(UnixTime.now());
     }
 
     public void setTimeStamp(long initTime){

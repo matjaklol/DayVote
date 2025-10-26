@@ -98,7 +98,7 @@ public class VoteCommand implements CommandExecutor
             return tryStartDayVote(vote, sender);
         }
 
-        if (args[0].equalsIgnoreCase("rain") || args[0].equalsIgnoreCase("rainstorm") || args[0].equalsIgnoreCase("storm")){
+        if (args[0].equalsIgnoreCase("rain") || args[0].equalsIgnoreCase("rainstorm") || args[0].equalsIgnoreCase("storm") || args[0].equalsIgnoreCase("snow") || args[0].equalsIgnoreCase("snowstorm")){
             return tryStartRainVote(vote, sender);
         }
 
